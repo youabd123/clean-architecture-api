@@ -1,3 +1,7 @@
+using CleanArchitectureApi.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using CleanArchitectureApi.Domain.Interfaces;
+using CleanArchitectureApi.Infrastructure.Repositories;
 
 namespace CleanArchitectureApi
 {
@@ -7,9 +11,13 @@ namespace CleanArchitectureApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
