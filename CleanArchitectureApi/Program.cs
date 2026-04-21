@@ -2,6 +2,8 @@ using CleanArchitectureApi.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using CleanArchitectureApi.Domain.Interfaces;
 using CleanArchitectureApi.Infrastructure.Repositories;
+using CleanArchitectureApi.Application.Features.Products;
+using MediatR;
 
 namespace CleanArchitectureApi
 {
@@ -11,8 +13,13 @@ namespace CleanArchitectureApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Register the DbContext with the connection string from appsettings.json
             builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Register MediatR and scan the assembly for handlers
+            builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(GetAllProductsQuery).Assembly));
 
             // Add services to the container.
 

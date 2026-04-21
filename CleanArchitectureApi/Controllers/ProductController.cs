@@ -1,5 +1,7 @@
-﻿using CleanArchitectureApi.Domain.Entities;
+﻿using CleanArchitectureApi.Application.Features.Products;
+using CleanArchitectureApi.Domain.Entities;
 using CleanArchitectureApi.Domain.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanArchitectureApi.Controllers;
@@ -9,23 +11,25 @@ namespace CleanArchitectureApi.Controllers;
 public class ProductController : ControllerBase
 {
     private readonly IProductRepository _repository;
+    private readonly IMediator _mediator;
 
-    public ProductController(IProductRepository repository)
+    public ProductController(IProductRepository repository, IMediator mediator)
     {
         _repository = repository;
+        _mediator = mediator;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var products = await _repository.GetAllAsync();
-        return Ok(products);
+        var result = await _mediator.Send(new GetAllProductsQuery());
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var product = await _repository.GetByIdAsync(id);
+        var product = await _mediator.Send(new GetProductByIdQuery(id));
 
         if (product == null)
             return NotFound();
