@@ -1,5 +1,4 @@
 ﻿using CleanArchitectureApi.Domain.Entities;
-using CleanArchitectureApi.Domain.Interfaces;
 using CleanArchitectureApi.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 

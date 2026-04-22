@@ -1,4 +1,6 @@
-﻿namespace CleanArchitectureApi.Domain.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace CleanArchitectureApi.Domain.Entities;
 
 public class Category
 {
