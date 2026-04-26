@@ -1,5 +1,6 @@
-﻿using CleanArchitectureApi.Domain.Entities;
-using CleanArchitectureApi.Infrastructure.Persistence;
+using CleanArchitectureApi.Application.Features.Categories;
+using CleanArchitectureApi.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanArchitectureApi.Controllers;
@@ -8,25 +9,24 @@ namespace CleanArchitectureApi.Controllers;
 [Route("api/[controller]")]
 public class CategoryController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IMediator _mediator;
 
-    public CategoryController(AppDbContext context)
+    public CategoryController(IMediator mediator)
     {
-        _context = context;
+        _mediator = mediator;
     }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        return Ok(_context.Categories.ToList());
+        var result = await _mediator.Send(new GetAllCategoriesQuery());
+        return Ok(result);
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(Category category)
     {
-        _context.Categories.Add(category);
-        await _context.SaveChangesAsync();
-
-        return Ok(category);
+        var createdCategory = await _mediator.Send(new CreateCategoryCommand(category.Name));
+        return Ok(createdCategory);
     }
 }

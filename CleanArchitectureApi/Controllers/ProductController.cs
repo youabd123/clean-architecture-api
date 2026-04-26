@@ -1,6 +1,5 @@
-﻿using CleanArchitectureApi.Application.Features.Products;
+using CleanArchitectureApi.Application.Features.Products;
 using CleanArchitectureApi.Domain.Entities;
-using CleanArchitectureApi.Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +9,10 @@ namespace CleanArchitectureApi.Controllers;
 [Route("api/[controller]")]
 public class ProductController : ControllerBase
 {
-    private readonly IProductRepository _repository;
     private readonly IMediator _mediator;
 
-    public ProductController(IProductRepository repository, IMediator mediator)
+    public ProductController(IMediator mediator)
     {
-        _repository = repository;
         _mediator = mediator;
     }
 
@@ -40,26 +37,20 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(Product product)
     {
-        await _repository.AddAsync(product);
-        await _repository.SaveChangesAsync();
+        var createdProduct = await _mediator.Send(
+            new CreateProductCommand(product.Name, product.Price, product.CategoryId));
 
-        return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+        return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, createdProduct);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, Product product)
     {
-        var existingProduct = await _repository.GetByIdAsync(id);
+        var updated = await _mediator.Send(
+            new UpdateProductCommand(id, product.Name, product.Price, product.CategoryId));
 
-        if (existingProduct == null)
+        if (!updated)
             return NotFound();
-
-        existingProduct.Name = product.Name;
-        existingProduct.Price = product.Price;
-        existingProduct.CategoryId = product.CategoryId;
-
-        await _repository.UpdateAsync(existingProduct);
-        await _repository.SaveChangesAsync();
 
         return NoContent();
     }
@@ -67,13 +58,10 @@ public class ProductController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var product = await _repository.GetByIdAsync(id);
+        var deleted = await _mediator.Send(new DeleteProductCommand(id));
 
-        if (product == null)
+        if (!deleted)
             return NotFound();
-
-        await _repository.DeleteAsync(product);
-        await _repository.SaveChangesAsync();
 
         return NoContent();
     }
