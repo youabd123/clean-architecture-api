@@ -7,9 +7,9 @@ Ett ASP.NET Core Web API byggt med Clean Architecture, CQRS, MediatR, Repository
 Lösningen är uppdelad i fyra lager:
 
 - `CleanArchitectureApi` - API-lager med controllers och programkonfiguration
-- `CleanArchitectureApi.Application` - application-lager med queries, handlers och affärslogik
-- `CleanArchitectureApi.Domain` - domain-lager med entiteter och interfaces
-- `CleanArchitectureApi.Infrastructure` - infrastructure-lager med DbContext, repositories och migrations
+- `CleanArchitectureApi.Application` - Application-lager med commands, queries, handlers och affärslogik
+- `CleanArchitectureApi.Domain` - Domain-lager med entiteter och interfaces
+- `CleanArchitectureApi.Infrastructure` - Infrastructure-lager med DbContext, repositories och migrations
 
 ## Tekniker
 
@@ -28,7 +28,8 @@ Projektet innehåller två modeller:
 - `Product`
 - `Category`
 
-Relation:
+### Relation
+
 - En `Category` kan ha många `Products`
 
 ## Funktionalitet
@@ -46,18 +47,31 @@ Relation:
 
 ## CQRS och MediatR
 
-Projektet använder CQRS med MediatR i application-lagret.
+Projektet använder CQRS med MediatR i Application-lagret.
+
+- Queries används för att hämta data
+- Commands används för att skapa, uppdatera och ta bort data
+- Handlers hanterar logiken för varje command och query
 
 Exempel:
-- Queries används för att hämta produkter
-- MediatR används i controllers för att skicka requests till handlers
+- `GetAllProductsQuery`
+- `GetProductByIdQuery`
+- `CreateProductCommand`
+- `UpdateProductCommand`
+- `DeleteProductCommand`
+- `GetAllCategoriesQuery`
+- `CreateCategoryCommand`
 
 ## Repository Pattern
 
-Repository Pattern används för `Product`.
+Repository Pattern används för att separera databaskoden från resten av applikationen.
 
-- Interface finns i `Domain`
-- Implementation finns i `Infrastructure`
+- Interfaces finns i `Domain`
+- Implementationer finns i `Infrastructure`
+
+Repositories i projektet:
+- `IProductRepository` / `ProductRepository`
+- `ICategoryRepository` / `CategoryRepository`
 
 ## Databas
 
@@ -79,6 +93,6 @@ Swagger är aktiverat i projektet och kan användas för att testa alla endpoint
 
 1. Klona repot
 2. Öppna lösningen i Visual Studio
-3. Kontrollera att databasen och connection string i `appsettings.json` stämmer
+3. Kontrollera connection string i `appsettings.json`
 4. Kör projektet
-5. Öppna Swagger i webbläsaren
+5. Öppna Swagger i webbläsaren för att testa endpoints
