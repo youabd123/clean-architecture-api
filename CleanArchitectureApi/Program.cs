@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using CleanArchitectureApi.Domain.Interfaces;
 using CleanArchitectureApi.Infrastructure.Repositories;
 using CleanArchitectureApi.Application.Features.Products;
+using MediatR;
 
 namespace CleanArchitectureApi
 {
@@ -15,8 +16,7 @@ namespace CleanArchitectureApi
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddMediatR(cfg =>
-                cfg.RegisterServicesFromAssembly(typeof(GetAllProductsQuery).Assembly));
+            builder.Services.AddMediatR(typeof(GetAllProductsQuery).Assembly);
 
             builder.Services.AddControllers();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();

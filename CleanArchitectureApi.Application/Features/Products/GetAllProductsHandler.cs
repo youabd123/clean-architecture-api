@@ -3,6 +3,8 @@ using CleanArchitectureApi.Domain.Entities;
 using CleanArchitectureApi.Domain.Interfaces;
 using MediatR;
 
+namespace CleanArchitectureApi.Application.Features.Products;
+
 public class GetAllProductsHandler
     : IRequestHandler<GetAllProductsQuery, IEnumerable<Product>>
 {
